@@ -26,3 +26,5 @@ and then you can run the following to kick off a test server (presuming you have
     
 access the test server at:
     http://localhost:8000
+
+Get in touch if you need further details.
