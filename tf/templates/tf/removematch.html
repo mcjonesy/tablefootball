@@ -1,0 +1,35 @@
+{% extends 'tf/base.html' %}      
+
+{% load staticfiles %}
+
+{% block body_block %}
+<h2>Remove Match</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th style="border:1px solid #ccc">Date/Time</th>
+      <th style="border:1px solid #ccc">Players</th>
+      <th style="border:1px solid #ccc">Score</th>
+    </tr>
+  </thead>
+  <tbody> 
+    <tr> 
+      <td rowspan="2" style="border-right:1px solid #ccc;border-bottom:1px solid #ccc;border-left:1px solid #ccc;border-top:1px solid #ccc;vertical-align:middle;">
+              {{match.match_date}}
+      </td>
+      <td style="border-bottom:1px solid #ccc;border-right:1px solid #ccc;
+        {% if match.scoreBlue <= match.scoreRed %}
+          font-weight:bold;color:red"> <img src="{% static 'tf/img/crown.png' %}" />
+        {% else %}
+          color:red">
+        {% endif %} {{ match.playerRed1 }} {% if match.playerRed2 %} &amp; {{match.playerRed2}} {% endif %} </td>
+      <td style="border-right:1px solid #ccc;border-top:1px solid #ccc;{% if match.scoreRed >= match.scoreBlue %}font-weight:bold;{% endif %}color:red"> {{ match.scoreRed }} </td>
+    </tr>
+    <tr>
+            <td style="border-bottom:1px solid #ccc;border-right:1px solid #ccc;{% if match.scoreBlue >= match.scoreRed %}font-weight:bold;color:blue"> <img src="{% static 'tf/img/crown.png' %}" />{% else %}color:blue">{% endif %} {{ match.playerBlue1 }} {% if match.playerBlue2 %} &amp; {{match.playerBlue2}} {% endif %} </td>
+      <td style="border-bottom:1px solid #ccc;border-right:1px solid #ccc;{% if match.scoreBlue >= match.scoreRed %}font-weight:bold;{% endif %}color:blue"> {{ match.scoreBlue }} </td>
+    </tr>
+  </tbody>
+</table>
+<form action="{% url 'tf:removematchsubmit' match_id=match.id %}"><button type="submit" class="btn btn-lg btn-primary">Delete Entry</button></form>
+{% endblock %}

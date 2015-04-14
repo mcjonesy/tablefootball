@@ -1,0 +1,28 @@
+{% spaceless %}<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="smcj">
+
+    <title>Table Football</title>
+
+    <link href="{% static 'tf/bs/css/bootstrap-flatly.min.css' %}" rel="stylesheet"/>
+
+    {% block head_block %}{% endblock %}
+    
+  </head>
+
+  <body role="document">
+    <div class="container theme-showcase" role="main">
+      <div class="page-header col-xs-12 col-md-8 col-md-offset-2">
+        <h1><a href="/tf/">Hawk-Eye Table Football</a></h1>
+      </div>
+      <div class="col-xs-12 col-md-8 col-md-offset-2"> 
+          {% block body_block %}{% endblock %} 
+      </div>
+    </div>
+  </body>
+</html>
+{% endspaceless %}

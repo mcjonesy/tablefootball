@@ -1,0 +1,126 @@
+{% extends 'tf/base.html' %}      
+
+{% load staticfiles %}
+
+{% block head_block %}
+<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="{% static 'tf/js/excanvas.js' %}"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="{% static 'tf/js/jquery.min.js' %}"></script>
+<script language="javascript" type="text/javascript" src="{% static 'tf/js/jquery.jqplot.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'tf/css/jquery.jqplot.min.css' %}" />
+<script type="text/javascript" src="{% static 'tf/js/jqplotplugin/jqplot.dateAxisRenderer.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'tf/js/jqplotplugin/jqplot.logAxisRenderer.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'tf/js/jqplotplugin/jqplot.canvasTextRenderer.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'tf/js/jqplotplugin/jqplot.canvasAxisTickRenderer.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'tf/js/jqplotplugin/jqplot.highlighter.min.js' %}"></script>
+<link rel="stylesheet" type="text/css" hrf="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/smoothness/jquery-ui.css" />
+{% endblock %}
+
+{% block body_block %}
+<h2>{{ player.player_name }}</h2>
+
+<h3>Elo By Date</h3>
+<div id="elochart"></div>
+
+<h3>Total Win/Draw/Loss Ratio</h3>
+</p>
+<div class="progress" style="vertical-align:middle;line-height: 30px; height: 40px; font-size:30px;">
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px; font-size:20px;width: {{ totalWins|floatformat }}%; background-image:none; background-color:#20bc7c">{{ totalWins|floatformat }}% Wins</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ totalDraws|floatformat }}%; background-image:none; background-color:#5B9E83">{{ totalDraws|floatformat }}% Draws</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ totalLosses|floatformat }}%; background-image:none; background-color:#888888">{{ totalLosses|floatformat }}% Losses</div>
+</div>
+
+<h3 style="color:red">Red Win/Draw/Loss Ratio</h3>
+</p>
+<div class="progress" style="vertical-align:middle;line-height: 30px; height: 40px; font-size:30px;">
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px; font-size:20px;width: {{ redWins|floatformat }}%; background-image:none; background-color:#20bc7c">{{ redWins|floatformat }}% Wins</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ redDraws|floatformat }}%; background-image:none; background-color:#5B9E83">{{ redDraws|floatformat }}% Draws</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ redLosses|floatformat }}%; background-image:none; background-color:#888888">{{ redLosses|floatformat }}% Losses</div>
+</div>
+
+<h3 style="color:blue">Blue Win/Draw/Loss Ratio</h3>
+</p>
+<div class="progress" style="vertical-align:middle;line-height: 30px; height: 40px; font-size:30px;">
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px; font-size:20px;width: {{ blueWins|floatformat }}%; background-image:none; background-color:#20bc7c">{{ blueWins|floatformat }}% Wins</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ blueDraws|floatformat }}%; background-image:none; background-color:#5B9E83">{{ blueDraws|floatformat }}% Draws</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ blueLosses|floatformat }}%; background-image:none; background-color:#888888">{{ blueLosses|floatformat }}% Losses</div>
+</div>
+
+<h3>Red/Blue Preference</h3>
+</p>
+<div class="progress" style="vertical-align:middle;line-height: 30px; height: 40px; font-size:30px;">
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px; font-size:20px;width: {{ redPlaysPercent|floatformat }}%; background-image:none; background-color:#d73c2c">{{ redPlaysPercent|floatformat }}%</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ bluePlaysPercent|floatformat }}%; background-image:none; background-color:#2c3e90">{{ bluePlaysPercent|floatformat }}%</div>
+</div>
+
+<script class="code" type="text/javascript">
+
+    $(document).ready(function () {
+        $.jqplot._noToImageButton = true;
+
+        var elos = [{% for elo in elo_list %}["{{ elo.elo_date|date:"Y-m-d" }} 00:00:00",{{ elo.elo }}]{% if not forloop.last %},{% endif %}{% endfor %}];
+
+        var plot1 = $.jqplot("elochart", [elos], {
+            seriesColors: ["rgba(78, 175, 154, 1.0)"],
+            highlighter: {
+                show: true,
+                sizeAdjust: 1,
+                tooltipOffset: 9
+            },
+            grid: {
+                background: 'rgba(97,97,97,0.4)',
+                drawBorder: false,
+                shadow: false,
+                gridLineColor: '#666666',
+                gridLineWidth: 2
+            },
+            legend: {
+                show: false
+            },
+            seriesDefaults: {
+                rendererOptions: {
+                    smooth: false,
+                    animation: {
+                        show: true
+                    }
+                },
+                showMarker: true
+            },
+            axesDefaults: {
+                rendererOptions: {
+                    baselineWidth: 1.5,
+                    baselineColor: '#111111',
+                    drawBaseline: false
+                }
+            },
+            axes: {
+                xaxis: {
+                    renderer: $.jqplot.DateAxisRenderer,
+                    tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                    tickOptions: {
+                        formatString: "%b %e",
+                        angle: -30,
+                        textColor: '#111111'
+                    },
+                    tickInterval: "1 days",
+                    drawMajorGridlines: false
+                },
+                yaxis: {
+                    pad: 0,
+                    rendererOptions: {
+                        tickRenderer:$.jqplot.CanvasAxisTickRenderer,
+                        minorTicks: 1
+                    },
+                    tickOptions: {
+                        formatString: "%'d",
+                        showMark: false
+                    }
+                }
+            }
+        });
+
+            $('.jqplot-highlighter-tooltip').addClass('ui-corner-all')
+    });
+
+
+</script>
+{% endblock %}

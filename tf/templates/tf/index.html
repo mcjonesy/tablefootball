@@ -1,0 +1,73 @@
+{% extends 'tf/base.html' %}      
+
+{% load staticfiles %}
+{% block body_block %}
+<h2 style="text-align:center">Current Rankings</h2>
+<table class="table table-bordered">
+<thead>
+  <tr>
+    <th>Rank</th>
+    <th>Name</th>
+    <th>Elo</th>
+  </tr>
+</thead>
+<tbody>
+  {% if player_list %}
+    {% for player in player_list %}
+      <tr>
+        <td>{{ player.rank }}</td>
+        <td><a href="{% url 'tf:playerpage' player_id=player.id %}">{{ player.player_name }} {% if player.rank == "1" or player.rank == "1=" %} <img src="{% static 'tf/img/crown.png' %}" />{% endif %}</a></td>
+        <td>{{player.elo_cache.elo}}</td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+</tbody>
+</table>
+<h2 style="text-align:center">Recent Matches</h2>
+<a style = "float:right" href='{% url 'tf:addmatch' %}'>Add Match></a>
+{% if latest_match_list %}
+<table class="table" style="margin-right:0px;">
+  <thead>
+  </thead>
+  <tbody>
+    {% for match in latest_match_list %}
+    <tr>
+      <td rowspan="2" style="border-right:1px solid #ccc;border-bottom:1px solid #ccc;border-left:1px solid #ccc;border-top:1px solid #ccc;vertical-align:middle;">{{match.match_date|date:"d/m/y H:i:s"}}</td>
+      <td style="border-bottom:1px solid #ccc;border-right:1px solid #ccc;border-top:1px solid #ccc;{% if match.scoreBlue <= match.scoreRed %}font-weight:bold;color:red"> <img src="{% static 'tf/img/crown.png' %}" />{% else %}color:red">{% endif %} {{ match.playerRed1 }} {% if match.playerRed2 %} &amp; {{match.playerRed2}} {% endif %} </td>
+      <td style="border-right:1px solid #ccc;border-top:1px solid #ccc;{% if match.scoreRed >= match.scoreBlue %}font-weight:bold;{% endif %}color:red"> {{ match.scoreRed }} </td>
+      <td rowspan="2" style="vertical-align:middle;border:1px solid #ccc"><a href='{% url 'tf:removematch' match_id=match.id %}'><span class="glyphicon glyphicon-minus" aria-hidden="true"/></a></td>
+    </tr>
+    <tr>
+      <td style="border-bottom:1px solid #ccc;border-right:1px solid #ccc;{% if match.scoreBlue >= match.scoreRed %}font-weight:bold;color:blue"> <img src="{% static 'tf/img/crown.png' %}" />{% else %}color:blue">{% endif %} {{ match.playerBlue1 }} {% if match.playerBlue2 %} &amp; {{match.playerBlue2}} {% endif %} </td>
+      <td style="border-bottom:1px solid #ccc;border-right:1px solid #ccc;{% if match.scoreBlue >= match.scoreRed %}font-weight:bold;{% endif %}color:blue"> {{ match.scoreBlue }} </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if latest_match_list.count >= 10 %}
+<ul style="text-align:right; float:right; list-style-type: none;">
+  <li><a href='{% url 'tf:matches' %}'>View All Matches></a></li>
+
+  <li><a href='{% url 'tf:addmatch' %}'>Add Match></a></li>
+</ul>
+{% endif %}
+{% else %}
+    <p>No matches have been played.</p>
+{% endif %}
+<p style="margin-bottom:2cm;"/>
+<h2 style="text-align:center">Table Balance</h2>
+<h3>Goals</h3>
+</p>
+<div class="progress" style="vertical-align:middle;line-height: 30px; height: 40px; font-size:30px;">
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px; font-size:20px;width: {{ redGoalsPercent|floatformat }}%; background-image:none; background-color:#d73c2c">{{redGoals}} ({{ redGoalsPercent|floatformat }}%)</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ blueGoalsPercent|floatformat }}%; background-image:none; background-color:#2c3e90">{{blueGoals}} ({{ blueGoalsPercent|floatformat }}%)</div>
+</div>
+
+<h3>Matches</h3>
+</p>
+<div class="progress" style="vertical-align:middle;line-height: 30px; height: 40px; font-size:30px;">
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px; font-size:20px;width: {{ redMatchesPercent|floatformat }}%; background-image:none; background-color:#d73c2c">{{redMatches}} ({{ redMatchesPercent|floatformat }}%)</div>
+    <div class="progress-bar" role="progressbar" style="vertical-align:middle;line-height:30px;font-size:20px;width: {{ blueMatchesPercent|floatformat }}%; background-image:none; background-color:#2c3e90">{{blueMatches}} ({{ blueMatchesPercent|floatformat }}%)</div>
+</div>
+
+{% endblock %}

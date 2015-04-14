@@ -1,0 +1,83 @@
+{% extends 'tf/base.html' %}      
+
+{% load staticfiles %}
+
+{% block head_block %}
+<script type="text/javascript" src="{% static 'tf/js/jquery-1.11.2.min.js' %}" ></script>
+<script type="text/javascript" src="{% static 'tf/js/moment.min.js' %}" ></script>
+<script type="text/javascript" src="{% static 'tf/bs/js/bootstrap.min.js' %}" ></script>
+<script type="text/javascript" src="{% static 'tf/dp/js/bootstrap-datetimepicker.min.js' %}" ></script>
+<link href="{% static 'tf/dp/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block body_block %} 
+<h2>Add Match</h2>
+<form role="form" action="{% url 'tf:addmatchsubmit' %}" method="post">
+  {% csrf_token %}
+  <!--Need to figure out what to put here-->
+  <!--Should be date, time, players 1-4, score 1 and 2-->
+  <div class="form-group col-xs-12">
+      <label for="datetimepicker1">Match Date/Time</label>
+      <div class='input-group date' id='datetimepicker1'>
+          <input name="match_date" type='text' id="match_date" class="form-control" />
+          <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+          </span>
+      </div>
+      <script type="text/javascript">
+          $(function () {
+              $('#datetimepicker1').datetimepicker({"date": new Date(),
+                 "defaultDate" : false,
+                 "useCurrent" : true,
+                 "format": "YYYY-MM-DD HH:mm:ss"});
+          });
+      </script>
+  </div>
+  <div class="form-group col-xs-12 col-md-6">
+    <label for="playerRed1" style="color:red"> Red player 1 (defence):</label>
+    <select name="playerRed1" class="form-control" id="playerRed1">
+      {% for player in player_list_without_null %}
+      <option value="{{ player.id }}">{{ player.player_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group col-xs-12 col-md-6">
+    <label for="playerRed2" style="color:red"> Red player 2 (offence):</label>
+    <select name="playerRed2" class="form-control" id="playerRed2">
+      {% for player in player_list %}
+      <option value="{{ player.id }}">{{ player.player_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group col-xs-12 col-md-6">
+    <label for="playerBlue1" style="color:blue"> Blue player 1 (defence):</label>
+    <select name="playerBlue1" class="form-control" id="playerBlue1">
+      {% for player in player_list_without_null %}
+      <option value="{{ player.id }}">{{ player.player_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group col-xs-12 col-md-6">
+    <label for="playerBlue2" style="color:blue"> Blue player 2 (offence):</label>
+    <select name="playerBlue2" class="form-control" id="playerBlue2">
+      {% for player in player_list %}
+      <option value="{{ player.id }}">{{ player.player_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group col-xs-6 col-md-6">
+    <label for="scoreRed" style="color:red"> Red score</label>
+    <input name="scoreRed" class="form-control" type="number" id="scoreRed" min="0" step="1" />
+  </div>
+  <div class="form-group col-xs-6 col-md-6">
+    <label for="scoreBlue" style="color:blue"> Blue score</label>
+    <input name="scoreBlue" class="form-control" type="number" id="scoreBlue" min="0" step="1" />
+  </div>
+  <div class="form-group checkbox col-xs-12 col-md-6 col-md-offset-3">
+    <label><input type="checkbox" checked name="ordered" id="ordered"/>Fixed defence/offence</label>
+  </div>
+  <div class="form-group col-xs-12 col-md-6 col-md-offset-3">
+    <input type="submit" class="form-control btn btn-primary" value="Save Match" />
+  </div>
+  <!--<input type="submit" class="btn btn-primary" value="Save Match and Add Another" />-->
+</form>  
+{% endblock %}
